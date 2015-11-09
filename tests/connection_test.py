@@ -1,4 +1,3 @@
-import pika
 import unittest
 import stonemq.exceptions
 import contracts
@@ -134,6 +133,52 @@ class UnitConnectionTest(unittest.TestCase):
                                            password='banana')
             assert False
         except stonemq.exceptions.InvalidCredentialsError as e:
+            assert True
+        except Exception as e:
+            assert False
+
+    def test_fail_connection_appkey(self):
+        #null Appkey
+        try:
+            connection = StoneMQConnection(appkey=None,
+                                           hostname=self.hostname,
+                                           port=self.port,
+                                           username=self.user,
+                                           password=self.password)
+            assert False
+        except contracts.ContractException as e:
+            assert True
+        except Exception as e:
+            assert False
+
+    def test_invalid_heartbeat_value(self):
+        #invalid heartbeat
+        try:
+            connection = StoneMQConnection(appkey=self.appkey,
+                                           hostname=self.hostname,
+                                           port=self.port,
+                                           username=self.user,
+                                           password=self.password,
+                                           prefetch=self.prefetch,
+                                           heartbeat=5)
+            assert False
+        except contracts.ContractException as e:
+            assert True
+        except Exception as e:
+            assert False
+
+    def test_invalid_prefetch_value(self):
+        #invalid prefetch
+        try:
+            connection = StoneMQConnection(appkey=self.appkey,
+                                           hostname=self.hostname,
+                                           port=self.port,
+                                           username=self.user,
+                                           password=self.password,
+                                           prefetch=-1,
+                                           heartbeat=self.heartbeat)
+            assert False
+        except contracts.ContractException as e:
             assert True
         except Exception as e:
             assert False

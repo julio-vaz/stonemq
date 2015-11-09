@@ -4,7 +4,7 @@ import contracts
 
 class StoneMQConnection:
 
-    @contracts.contract(appkey='string', hostname='string', port='int', username='string', password='string', prefetch='int', heartbeat='int')
+    @contracts.contract(appkey='string', hostname='string', port='int', username='string', password='string', prefetch='int,>=1,<10000', heartbeat='int,>=120,<=580')
     def __init__(self, appkey, hostname, port, username, password, prefetch = 1, heartbeat = 580):
         self.appkey = appkey
         self.hostname = hostname
@@ -24,3 +24,7 @@ class StoneMQConnection:
             raise stonemq.exceptions.ConnectionError
         except pika.exceptions.ProbableAuthenticationError as e:
             raise stonemq.exceptions.InvalidCredentialsError
+
+        self._channel = self._connection.channel()
+        self._channel.add_on_return_callback(self.callback)
+        self.successful = True
