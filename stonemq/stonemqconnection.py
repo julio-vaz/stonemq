@@ -24,7 +24,3 @@ class StoneMQConnection:
             raise stonemq.exceptions.ConnectionError
         except pika.exceptions.ProbableAuthenticationError as e:
             raise stonemq.exceptions.InvalidCredentialsError
-
-        self._channel = self._connection.channel()
-        self._channel.add_on_return_callback(self.callback)
-        self.successful = True
