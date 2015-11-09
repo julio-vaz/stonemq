@@ -24,3 +24,18 @@ class StoneMQConnection:
             raise stonemq.exceptions.ConnectionError
         except pika.exceptions.ProbableAuthenticationError as e:
             raise stonemq.exceptions.InvalidCredentialsError
+
+        self._channel = self._connection.channel()
+        self._channel.add_on_return_callback(self.callback)
+        self.successful = True
+
+    def callback(self, channel, method, properties, body):
+        self.successful = False
+
+    @contracts.contract(route='string', event='string', uri='string')
+    def send(self, route, event, message, uri=''):
+        body = _resolve_message(route, event, message, uri)
+        self._channel.basic_publish(exchange=route, routing_key='', body=body)
+
+    def _resolve_message(self, route, event, message, uri):
+        return message
