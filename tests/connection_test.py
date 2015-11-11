@@ -24,161 +24,118 @@ class UnitConnectionTest(unittest.TestCase):
                                            hostname=self.hostname,
                                            port=self.port,
                                            username=self.user,
-                                           password=self.password)
+                                           password=self.password)       
+            connection._close_connection()
         except Exception as e:
-            assert False
-
-        assert True
+          self.fail()
 
     def test_fail_connection_invalid_hostname(self):
         #null hostname
-        try:
-            connection = StoneMQConnection(appkey=self.appkey,
-                                           hostname=None,
-                                           port=self.port,
-                                           username=self.user,
-                                           password=self.password)
-            assert False
-        except contracts.ContractException as e:
-            assert True
-        except Exception as e:
-            assert False
+        def __null_hostname():
+            StoneMQConnection(appkey=self.appkey,
+                              hostname=None,
+                              port=self.port,
+                              username=self.user,
+                              password=self.password)
+        self.assertRaises(contracts.ContractException, __null_hostname)
 
         #invalid hostname
-        try:
-            connection = StoneMQConnection(appkey=self.appkey,
-                                           hostname="None",
-                                           port=self.port,
-                                           username=self.user,
-                                           password=self.password)
-            assert False
-        except stonemq.exceptions.ConnectionError as e:
-            assert True
-        except Exception as e:
-            assert False
+        def __invalid_hostname():
+            StoneMQConnection(appkey=self.appkey,
+                              hostname="None",
+                              port=self.port,
+                              username=self.user,
+                              password=self.password)
+        self.assertRaises(stonemq.exceptions.ConnectionError, __invalid_hostname)
 
     def test_fail_connection_invalid_port(self):
         #null port
-        try:
-            connection = StoneMQConnection(appkey=self.appkey,
-                                           hostname=self.hostname,
-                                           port=None,
-                                           username=self.user,
-                                           password=self.password)
-            assert False
-        except contracts.ContractException as e:
-            assert True
-        except Exception as e:
-            assert False
+        def __null_port():
+            StoneMQConnection(appkey=self.appkey,
+                              hostname=self.hostname,
+                              port=None,
+                              username=self.user,
+                              password=self.password)
+        self.assertRaises(contracts.ContractException, __null_port)
 
         #invalid port
-        try:
-            connection = StoneMQConnection(appkey=self.appkey,
-                                           hostname=self.hostname,
-                                           port=-1,
-                                           username=self.user,
-                                           password=self.password)
-            assert False
-        except stonemq.exceptions.ConnectionError as e:
-            assert True
-        except Exception as e:
-            assert False
+        def __invalid_port():
+            StoneMQConnection(appkey=self.appkey,
+                              hostname=self.hostname,
+                              port=-1,
+                              username=self.user,
+                              password=self.password)
+        self.assertRaises(stonemq.exceptions.ConnectionError, __invalid_port)    
 
     def test_fail_connection_invalid_credentials(self):
         #null username
-        try:
-            connection = StoneMQConnection(appkey=self.appkey,
-                                           hostname=self.hostname,
-                                           port=self.port,
-                                           username=None,
-                                           password=self.password)
-            assert False
-        except contracts.ContractException as e:
-            assert True
-        except Exception as e:
-            assert False
+        def __null_username():
+            StoneMQConnection(appkey=self.appkey,
+                              hostname=self.hostname,
+                              port=self.port,
+                              username=None,
+                              password=self.password)
+        self.assertRaises(contracts.ContractException, __null_username)
 
         #invalid username
-        try:
-            connection = StoneMQConnection(appkey=self.appkey,
-                                           hostname=self.hostname,
-                                           port=self.port,
-                                           username='banana',
-                                           password=self.password)
-            assert False
-        except stonemq.exceptions.InvalidCredentialsError as e:
-            assert True
-        except Exception as e:
-            assert False
+        def __invalid_username():
+            StoneMQConnection(appkey=self.appkey,
+                              hostname=self.hostname,
+                              port=self.port,
+                              username='banana',
+                              password=self.password)
+        self.assertRaises(stonemq.exceptions.InvalidCredentialsError, 
+                          __invalid_username) 
 
         #null password
-        try:
-            connection = StoneMQConnection(appkey=self.appkey,
-                                           hostname=self.hostname,
-                                           port=self.port,
-                                           username=self.user,
-                                           password=None)
-            assert False
-        except contracts.ContractException as e:
-            assert True
-        except Exception as e:
-            assert False
+        def __null_password():
+            StoneMQConnection(appkey=self.appkey,
+                              hostname=self.hostname,
+                              port=self.port,
+                              username=self.user,
+                              password=None)
+        self.assertRaises(contracts.ContractException, __null_password)
 
         #invalid password
-        try:
-            connection = StoneMQConnection(appkey=self.appkey,
-                                           hostname=self.hostname,
-                                           port=self.port,
-                                           username=self.user,
-                                           password='banana')
-            assert False
-        except stonemq.exceptions.InvalidCredentialsError as e:
-            assert True
-        except Exception as e:
-            assert False
+        def __invalid_password():
+            StoneMQConnection(appkey=self.appkey,
+                              hostname=self.hostname,
+                              port=self.port,
+                              username=self.user,
+                              password='banana')
+        self.assertRaises(stonemq.exceptions.InvalidCredentialsError, 
+                          __invalid_password) 
 
     def test_fail_connection_appkey(self):
         #null Appkey
-        try:
-            connection = StoneMQConnection(appkey=None,
-                                           hostname=self.hostname,
-                                           port=self.port,
-                                           username=self.user,
-                                           password=self.password)
-            assert False
-        except contracts.ContractException as e:
-            assert True
-        except Exception as e:
-            assert False
+        def __null_appkey():
+            StoneMQConnection(appkey=None,
+                              hostname=self.hostname,
+                              port=self.port,
+                              username=self.user,
+                              password=self.password)
+        self.assertRaises(contracts.ContractException, __null_appkey)
 
     def test_invalid_heartbeat_value(self):
         #invalid heartbeat
-        try:
-            connection = StoneMQConnection(appkey=self.appkey,
-                                           hostname=self.hostname,
-                                           port=self.port,
-                                           username=self.user,
-                                           password=self.password,
-                                           prefetch=self.prefetch,
-                                           heartbeat=5)
-            assert False
-        except contracts.ContractException as e:
-            assert True
-        except Exception as e:
-            assert False
+        def __invalid_heartbeat():
+            StoneMQConnection(appkey=self.appkey,
+                              hostname=self.hostname,
+                              port=self.port,
+                              username=self.user,
+                              password=self.password,
+                              prefetch=self.prefetch,
+                              heartbeat=5)
+        self.assertRaises(contracts.ContractException, __invalid_heartbeat)
 
     def test_invalid_prefetch_value(self):
         #invalid prefetch
-        try:
-            connection = StoneMQConnection(appkey=self.appkey,
-                                           hostname=self.hostname,
-                                           port=self.port,
-                                           username=self.user,
-                                           password=self.password,
-                                           prefetch=-1,
-                                           heartbeat=self.heartbeat)
-            assert False
-        except contracts.ContractException as e:
-            assert True
-        except Exception as e:
-            assert False
+        def __invalid_heartbeat():
+            StoneMQConnection(appkey=self.appkey,
+                              hostname=self.hostname,
+                              port=self.port,
+                              username=self.user,
+                              password=self.password,
+                              prefetch=-1,
+                              heartbeat=self.heartbeat)
+        self.assertRaises(contracts.ContractException, __invalid_heartbeat)
