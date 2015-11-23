@@ -2,7 +2,6 @@ import unittest
 import stonemq.exceptions
 import contracts
 from stonemq.stonemqconnection import StoneMQConnection
-import traceback
 
 
 class SendMessageTests(unittest.TestCase):
@@ -13,7 +12,12 @@ class SendMessageTests(unittest.TestCase):
         self.invalid_route = 'cia'
         self.event = "Test"
         self.uri = "www.hostname.com"
-        self.message = {'ID': 0, 'Name': 'BananaMae', 'Bananas': [{'Type': 'DaTerra'}, {'Type': 'DaAgua'}]}
+        self.dict_message = {'ID': 0, 'Name': 'BananaMae',
+                             'Bananas': [
+                                          {'Type': 'DaTerra'},
+                                          {'Type': 'DaAgua'}
+                                        ]
+                             }
 
         hostname = '172.16.134.99'
         port = 5672
@@ -37,13 +41,13 @@ class SendMessageTests(unittest.TestCase):
     def test_ok_send_message(self):
         try:
             self.valid_connection.send(
-                route=self.route, event=self.event, message=self.message, 
+                route=self.route, event=self.event, message=self.dict_message,
                 uri=self.uri)
-        except Exception as e:
+        except Exception:
             self.fail()
 
     def test_fail_send_message_invalid_route(self):
-        # null route
+        # Null route
         self.assertRaises(contracts.ContractException,
                           self.valid_connection.send,
                           route=None,
@@ -51,15 +55,15 @@ class SendMessageTests(unittest.TestCase):
                           event=self.event,
                           message=self.message)
 
-        # invalid route
-        self.assertRaises(stonemq.exceptions.RouteNotFoundError, 
+        # Invalid route
+        self.assertRaises(stonemq.exceptions.RouteNotFoundError,
                           self.valid_connection.send,
-                          route=self.route+"!", uri=self.uri, 
-                          event=self.event, message=self.message)
+                          route=self.route+"!", uri=self.uri,
+                          event=self.event, message=self.dict_message)
 
     def test_fail_send_message_invalid_permissions(self):
-        # insufficent permissions
+        # Insufficent permissions
         self.assertRaises(stonemq.exceptions.InsufficientPermissionsError,
-                          self.invalid_connection.send, 
-                          route=self.invalid_route, uri=self.uri, 
+                          self.invalid_connection.send,
+                          route=self.invalid_route, uri=self.uri,
                           event=self.event, message=self.message)
