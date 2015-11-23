@@ -49,20 +49,26 @@ class StoneMQConnection:
                 raise stonemq.exceptions.RouteNotFoundError
 
     def _resolve_message(self, route, event, message, uri):
-        return json.dumps(message, default=json_util.default)
+        resolved_message = {
+            'appkey': self.appkey,
+            'event': event,
+            'uri': uri,
+            'content': message
+        }
+        return json.dumps(resolved_message, default=json_util.default)
 
     def _close_connection(self):
-        try:
-            self._channel.close()
-            self._connection.close()
-        except:
-            pass
+        self._channel.close()
+        self._connection.close()
 
     def stop_consuming(self):
         self.should_consume = False
 
     def callback(self, channel, method, properties, body):
-        mod_body = json.loads(body, object_hook=json_util.object_hook)
+        try:
+            mod_body = json.loads(body, object_hook=json_util.object_hook)
+        except ValueError:
+            raise stonemq.exceptions.ConsumedMessageIsNotJsonError
         self.outer_callback(mod_body)
 
     def consume(self, route, callback):
