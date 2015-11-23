@@ -17,3 +17,8 @@ class RouteNotFoundError(Exception):
 class InsufficientPermissionsError(Exception):
     def __str__(self):
         return "Invalid permission to access route"
+
+
+class ConsumedMessageIsNotJsonError(Exception):
+    def __str__(self):
+        return "Consumed message should be a JSON."
