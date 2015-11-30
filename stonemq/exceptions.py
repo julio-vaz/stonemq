@@ -22,3 +22,8 @@ class InsufficientPermissionsError(Exception):
 class ConsumedMessageIsNotJsonError(Exception):
     def __str__(self):
         return "Consumed message should be a JSON."
+
+
+class ConnectionLost(Exception):
+    def __str__(self):
+        return "Lost connection to the server."
